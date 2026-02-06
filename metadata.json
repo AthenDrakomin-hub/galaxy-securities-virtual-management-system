@@ -1,0 +1,7 @@
+{
+  "name": "Galaxy Securities Virtual Management System",
+  "description": "A high-end, industrial-themed virtual securities management platform for A-shares and HK-shares, featuring automated trading and institution-grade client integration panels.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
