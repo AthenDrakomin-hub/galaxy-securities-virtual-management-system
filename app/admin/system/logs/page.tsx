@@ -1,114 +1,383 @@
-
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Activity, Shield, Cpu, Cloud, RefreshCw, Terminal, Search } from 'lucide-react';
-import { db } from '../../../../lib/mongodb/client';
+import { useState, useEffect } from 'react';
+import { Search, Filter, Download, ChevronDown } from 'lucide-react';
+import { format } from 'date-fns';
+
+// 自定义UI组件
+const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`bg-[#121212] border border-stone-800 rounded-2xl shadow-xl ${className}`}>
+    {children}
+  </div>
+);
+
+const CardHeader = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`p-6 border-b border-stone-800 ${className}`}>
+    {children}
+  </div>
+);
+
+const CardTitle = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <h3 className={`text-xl font-bold text-white ${className}`}>
+    {children}
+  </h3>
+);
+
+const CardDescription = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <p className={`text-sm text-stone-500 mt-1 ${className}`}>
+    {children}
+  </p>
+);
+
+const CardContent = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`p-6 ${className}`}>
+    {children}
+  </div>
+);
+
+const Table = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`w-full overflow-auto ${className}`}>
+    <table className="w-full">
+      {children}
+    </table>
+  </div>
+);
+
+const TableHeader = ({ children }: { children: React.ReactNode }) => (
+  <thead className="bg-stone-900/50">
+    {children}
+  </thead>
+);
+
+const TableRow = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <tr className={`border-b border-stone-800 ${className}`}>
+    {children}
+  </tr>
+);
+
+const TableHead = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <th className={`text-left p-3 text-xs font-bold text-stone-500 uppercase tracking-wider ${className}`}>
+    {children}
+  </th>
+);
+
+const TableBody = ({ children }: { children: React.ReactNode }) => (
+  <tbody>
+    {children}
+  </tbody>
+);
+
+const TableCell = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <td className={`p-3 text-sm ${className}`}>
+    {children}
+  </td>
+);
+
+const Input = ({ placeholder, value, onChange, className = '' }: { 
+  placeholder: string; 
+  value: string; 
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+}) => (
+  <input
+    type="text"
+    placeholder={placeholder}
+    value={value}
+    onChange={onChange}
+    className={`w-full bg-stone-900 border border-stone-800 rounded-lg px-4 py-2 text-white placeholder-stone-500 focus:outline-none focus:border-orange-600 focus:ring-1 focus:ring-orange-600 ${className}`}
+  />
+);
+
+const Button = ({ children, variant = 'default', onClick, className = '' }: { 
+  children: React.ReactNode; 
+  variant?: 'default' | 'outline';
+  onClick?: () => void;
+  className?: string;
+}) => {
+  const baseClass = 'px-4 py-2 rounded-lg font-medium transition flex items-center justify-center gap-2';
+  const variantClass = variant === 'outline' 
+    ? 'bg-transparent border border-stone-700 text-stone-300 hover:bg-stone-800 hover:border-stone-600' 
+    : 'bg-orange-600 text-white hover:bg-orange-700';
+  
+  return (
+    <button 
+      onClick={onClick}
+      className={`${baseClass} ${variantClass} ${className}`}
+    >
+      {children}
+    </button>
+  );
+};
+
+// 简化版Select组件
+const Select = ({ value, onValueChange, children, placeholder }: {
+  value: string;
+  onValueChange: (value: string) => void;
+  children: React.ReactNode;
+  placeholder?: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  
+  const handleSelect = (selectedValue: string) => {
+    onValueChange(selectedValue);
+    setOpen(false);
+  };
+  
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-[180px] bg-stone-900 border border-stone-800 rounded-lg px-4 py-2 text-white text-left flex items-center justify-between hover:border-stone-700"
+      >
+        <span className="truncate">{value === 'all' ? placeholder || '选择...' : value}</span>
+        <ChevronDown size={16} className="text-stone-500" />
+      </button>
+      {open && (
+        <div className="absolute z-10 mt-1 w-full bg-stone-900 border border-stone-800 rounded-lg shadow-lg">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const SelectContent = ({ children }: { children: React.ReactNode }) => (
+  <div className="py-1">
+    {children}
+  </div>
+);
+
+const SelectItem = ({ value, children, onSelect }: {
+  value: string;
+  children: React.ReactNode;
+  onSelect?: (value: string) => void;
+}) => (
+  <div
+    onClick={() => onSelect?.(value)}
+    className="px-4 py-2 text-sm text-white hover:bg-stone-800 cursor-pointer"
+  >
+    {children}
+  </div>
+);
+
+const SelectTrigger = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={className}>
+    {children}
+  </div>
+);
+
+const SelectValue = ({ placeholder }: { placeholder?: string }) => (
+  <span>{placeholder}</span>
+);
+
+interface LogEntry {
+  id: string;
+  userId: string;
+  username: string;
+  action: string;
+  module: string;
+  details: string;
+  ip: string;
+  timestamp: Date;
+  status: 'SUCCESS' | 'FAILED';
+}
 
 export default function LogsPage() {
-  const [logs, setLogs] = useState([...db.logs]);
-  const [filter, setFilter] = useState<string>('');
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [moduleFilter, setModuleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setLogs([...db.logs]);
-    }, 2000);
-    return () => clearInterval(timer);
+    // 模拟获取日志数据
+    const mockLogs: LogEntry[] = [
+      {
+        id: '1',
+        userId: 'user001',
+        username: 'admin',
+        action: 'LOGIN',
+        module: 'AUTH',
+        details: '用户登录系统',
+        ip: '192.168.1.100',
+        timestamp: new Date('2024-01-15T10:30:00'),
+        status: 'SUCCESS'
+      },
+      {
+        id: '2',
+        userId: 'user002',
+        username: 'operator1',
+        action: 'TRADE_BUY',
+        module: 'TRADE',
+        details: '买入股票 AAPL 100股',
+        ip: '192.168.1.101',
+        timestamp: new Date('2024-01-15T11:15:00'),
+        status: 'SUCCESS'
+      },
+      {
+        id: '3',
+        userId: 'user003',
+        username: 'client1',
+        action: 'WITHDRAW',
+        module: 'FUND',
+        details: '提现申请 5000元',
+        ip: '192.168.1.102',
+        timestamp: new Date('2024-01-15T14:20:00'),
+        status: 'FAILED'
+      },
+      {
+        id: '4',
+        userId: 'user001',
+        username: 'admin',
+        action: 'USER_CREATE',
+        module: 'USER',
+        details: '创建新用户 operator2',
+        ip: '192.168.1.100',
+        timestamp: new Date('2024-01-15T15:45:00'),
+        status: 'SUCCESS'
+      },
+      {
+        id: '5',
+        userId: 'user004',
+        username: 'client2',
+        action: 'API_CALL',
+        module: 'INTEGRATION',
+        details: '调用行情接口获取股票数据',
+        ip: '192.168.1.103',
+        timestamp: new Date('2024-01-15T16:30:00'),
+        status: 'SUCCESS'
+      }
+    ];
+
+    setLogs(mockLogs);
+    setLoading(false);
   }, []);
 
-  const filteredLogs = logs.filter(l => 
-    l.event.toLowerCase().includes(filter.toLowerCase()) || 
-    l.type.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredLogs = logs.filter(log => {
+    const matchesSearch = 
+      log.username.toLowerCase().includes(search.toLowerCase()) ||
+      log.action.toLowerCase().includes(search.toLowerCase()) ||
+      log.details.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesModule = moduleFilter === 'all' || log.module === moduleFilter;
+    const matchesStatus = statusFilter === 'all' || log.status === statusFilter.toUpperCase();
+
+    return matchesSearch && matchesModule && matchesStatus;
+  });
+
+  const modules = Array.from(new Set(logs.map(log => log.module)));
 
   return (
-    <div className="space-y-8 animate-fade-up pb-20">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div>
-          <h2 className="text-4xl font-black text-white tracking-tighter mb-2">审计日志 <span className="text-orange-600">AUDIT_LOGS</span></h2>
-          <p className="text-stone-500 font-medium">全量系统事件记录，支持核心安全审计与故障溯源</p>
-        </div>
-        <div className="flex items-center gap-4 w-full md:w-auto">
-           <div className="flex items-center gap-3 bg-stone-900 border border-stone-800 rounded-xl px-4 py-2 flex-1 md:w-64">
-              <Search size={16} className="text-stone-600" />
-              <input 
-                type="text" 
-                placeholder="过滤日志事件..." 
-                className="bg-transparent border-none outline-none text-xs text-stone-300 w-full"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              />
-           </div>
-           <button 
-             onClick={() => setLogs([...db.logs])}
-             className="p-3 bg-stone-900 border border-stone-800 rounded-xl text-stone-500 hover:text-white transition shadow-lg"
-           >
-             <RefreshCw size={18} />
-           </button>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: '系统事件累计', count: logs.length.toLocaleString(), icon: <Cpu size={20} /> },
-          { label: '安全合规级别', count: 'L3_HIGH', icon: <Shield size={20} /> },
-          { label: '核心引擎负载', count: '0.12%', icon: <Activity size={20} /> },
-          { label: '网关对账状态', count: 'SYNCED', icon: <Cloud size={20} /> },
-        ].map(stat => (
-          <div key={stat.label} className="bg-[#121212] border border-stone-800 p-6 rounded-2xl flex items-center gap-4 group hover:border-orange-600/30 transition-all shadow-xl">
-             <div className="p-3 bg-stone-900 text-orange-600 rounded-xl border border-stone-800 shadow-inner group-hover:scale-110 transition-transform">
-               {stat.icon}
-             </div>
-             <div>
-               <p className="text-[10px] font-black text-stone-600 uppercase tracking-widest">{stat.label}</p>
-               <p className="text-xl font-mono font-bold text-white uppercase">{stat.count}</p>
-             </div>
-          </div>
-        ))}
+    <div className="container mx-auto py-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white">操作日志</h1>
+        <p className="text-stone-500 mt-2">查看系统所有操作记录，支持搜索和筛选</p>
       </div>
 
-      <div className="bg-[#121212] border border-stone-800 rounded-3xl overflow-hidden font-mono text-xs shadow-2xl">
-        <div className="p-4 bg-stone-950 border-b border-stone-800 flex justify-between items-center">
-           <div className="flex items-center gap-3">
-              <Terminal size={14} className="text-orange-600" />
-              <span className="text-stone-600 uppercase font-black tracking-widest">Galaxy_Event_Stream_Mirror v3.1</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <div className="w-1.5 h-1.5 bg-orange-600 rounded-full animate-pulse"></div>
-             <span className="text-[10px] text-orange-600 uppercase font-bold tracking-tighter">Live Monitor</span>
-           </div>
-        </div>
-        
-        <div className="overflow-x-auto custom-scrollbar">
-          <div className="divide-y divide-stone-800/30 min-w-[800px] max-h-[600px] overflow-y-auto">
-            {filteredLogs.length > 0 ? filteredLogs.map(log => (
-              // Fix: Use _id as key since LogSchema defines _id
-              <div key={log._id} className="p-4 flex items-center gap-6 hover:bg-stone-800/20 transition-colors group">
-                <span className="text-stone-700 w-44 shrink-0 font-mono tabular-nums">{log.time.toLocaleString()}</span>
-                <span className={`px-2 py-0.5 rounded text-[9px] font-black w-16 text-center border shrink-0 ${
-                  log.type === 'SYS' ? 'bg-blue-900/10 text-blue-500 border-blue-900/20' :
-                  log.type === 'AUTH' ? 'bg-purple-900/10 text-purple-500 border-purple-900/20' :
-                  log.type === 'TRADE' ? 'bg-orange-900/10 text-orange-500 border-orange-900/20' :
-                  log.type === 'DB' ? 'bg-green-900/10 text-green-500 border-green-900/20' :
-                  log.type === 'NET' ? 'bg-cyan-900/10 text-cyan-500 border-cyan-900/20' :
-                  'bg-stone-900/10 text-stone-500 border-stone-800/50'
-                }`}>{log.type}</span>
-                <span className="flex-1 text-stone-400 font-sans font-medium group-hover:text-stone-200 transition-colors">{log.event}</span>
-                <span className={`font-black tracking-tighter shrink-0 w-12 text-right ${
-                  log.status === 'OK' ? 'text-green-800' : 
-                  log.status === 'WARN' ? 'text-orange-800' : 'text-red-800'
-                }`}>{log.status}</span>
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-500 h-4 w-4" />
+                <Input
+                  placeholder="搜索用户、操作或详情..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-            )) : (
-              <div className="p-20 text-center text-stone-800 italic uppercase font-black">Waiting for system events or no results found...</div>
-            )}
+            </div>
+            
+            <div className="flex gap-4">
+              <Select value={moduleFilter} onValueChange={setModuleFilter} placeholder="模块筛选">
+                <SelectContent>
+                  <SelectItem value="all" onSelect={setModuleFilter}>所有模块</SelectItem>
+                  {modules.map(module => (
+                    <SelectItem key={module} value={module} onSelect={setModuleFilter}>{module}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={statusFilter} onValueChange={setStatusFilter} placeholder="状态筛选">
+                <SelectContent>
+                  <SelectItem value="all" onSelect={setStatusFilter}>所有状态</SelectItem>
+                  <SelectItem value="success" onSelect={setStatusFilter}>成功</SelectItem>
+                  <SelectItem value="failed" onSelect={setStatusFilter}>失败</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Button variant="outline">
+                <Filter className="mr-2 h-4 w-4" />
+                更多筛选
+              </Button>
+
+              <Button>
+                <Download className="mr-2 h-4 w-4" />
+                导出日志
+              </Button>
+            </div>
           </div>
-        </div>
-        
-        <div className="p-6 text-center border-t border-stone-800 bg-stone-950/50">
-           <p className="text-stone-700 uppercase text-[9px] font-black tracking-[0.3em]">EndOfLine // Galaxy Audit Terminal v3.1 // All events recorded</p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>操作记录</CardTitle>
+          <CardDescription>
+            共 {filteredLogs.length} 条记录，最近更新：{format(new Date(), 'yyyy-MM-dd HH:mm:ss')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8 text-stone-500">加载中...</div>
+          ) : (
+            <div className="rounded-lg border border-stone-800 overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>时间</TableHead>
+                    <TableHead>用户</TableHead>
+                    <TableHead>模块</TableHead>
+                    <TableHead>操作</TableHead>
+                    <TableHead>详情</TableHead>
+                    <TableHead>IP地址</TableHead>
+                    <TableHead>状态</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredLogs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="font-medium text-white">
+                        {format(log.timestamp, 'MM-dd HH:mm:ss')}
+                      </TableCell>
+                      <TableCell className="text-white">{log.username}</TableCell>
+                      <TableCell>
+                        <span className="px-2 py-1 bg-stone-900 text-stone-300 rounded text-xs border border-stone-800">
+                          {log.module}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-white">{log.action}</TableCell>
+                      <TableCell className="text-stone-300 max-w-xs truncate">{log.details}</TableCell>
+                      <TableCell className="text-stone-400">{log.ip}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          log.status === 'SUCCESS' 
+                            ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
+                            : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                        }`}>
+                          {log.status === 'SUCCESS' ? '成功' : '失败'}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

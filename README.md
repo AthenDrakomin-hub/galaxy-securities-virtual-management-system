@@ -1,55 +1,397 @@
+# 银河证券虚拟管理系统 (Galaxy Virtual Securities Management System)
 
-# 银河证券虚拟管理系统 (Galaxy Virtual Securities)
+一个基于 Next.js 16 + TypeScript + Tailwind CSS 构建的高端、工业感虚拟证券管理系统，专为金融机构、教育机构和模拟交易平台设计。
 
-这是一个基于 Next.js 16 + TypeScript + Tailwind CSS 构建的高端、工业感虚拟证券管理系统。
+## 🚀 核心特性
 
-## 核心特性
+### 📈 跨域行情镜像
+- 模拟 A 股与港股实时行情同步
+- 毫秒级数据看板与可视化图表
+- 自动行情同步与手动刷新机制
 
-- **跨域行情镜像**: 模拟 A 股与港股实时行情同步，提供毫秒级数据看板。
-- **全业务交易矩阵**:
-  - **常规交易**: 模拟沪深京及港股通交易流程。
-  - **新股申购 (IPO)**: 一键参与虚拟资产初始定价。
-  - **大宗交易 (Block)**: 支持机构协议成交与折价定价。
-  - **一键打板 (Flash Board)**: 毫秒级涨停板抢单引擎模拟。
-- **审计与合规控制**:
-  - **客户资金管理**: 完备的资金上下分审计流程。
-  - **权限下发**: 支持 ADMIN, OPERATOR, CLIENT 三级权限体系。
-- **工业感 UI/UX**:
-  - 采用铝感金属材质设计。
-  - 霓虹橙 (#FF4500) 核心强调色。
-  - 完备的深色模式与网格背景。
+### 💰 全业务交易矩阵
+- **常规交易**: 模拟沪深京及港股通交易流程
+- **新股申购 (IPO)**: 一键参与虚拟资产初始定价
+- **大宗交易 (Block)**: 支持机构协议成交与折价定价
+- **一键打板 (Flash Board)**: 毫秒级涨停板抢单引擎模拟
 
-## 技术栈
+### 🔐 审计与合规控制
+- **客户资金管理**: 完备的资金上下分审计流程
+- **权限下发**: 支持 ADMIN, OPERATOR, CLIENT 三级权限体系
+- **操作日志**: 完整的系统操作审计追踪
 
-- **前端框架**: Next.js 16 (App Router)
-- **状态管理**: 基于 MockDB 的轻量化持久逻辑
-- **UI 组件**: Tailwind CSS + Lucide Icons + Recharts
-- **数据库模拟**: 内存态 MongoDB 镜像实现
+### 🎨 工业感 UI/UX
+- 铝感金属材质设计语言
+- 霓虹橙 (#FF4500) 核心强调色
+- 完备的深色模式与网格背景
+- 响应式设计，支持多端访问
 
-## 快速开始
+## 🛠️ 技术栈
 
-该项目设计为轻量化、即插即用的虚拟环境。
+### 前端
+- **框架**: Next.js 16 (App Router)
+- **语言**: TypeScript 5.8+
+- **样式**: Tailwind CSS 4.1+
+- **图表**: Recharts 3.7+
+- **图标**: Lucide React 0.563+
 
-1. **进入管理后台**: 默认通过 `/admin/dashboard` 访问。
-2. **资金操作**: 在 `客户管理` 页面选择用户进行上分/下分操作。
-3. **API 接入**: 使用 `可视化接入` 面板生成 API 密钥，以便第三方客户端对接。
+### 后端
+- **运行时**: Node.js 18+
+- **数据库**: MongoDB Atlas / 本地 MongoDB
+- **ORM**: Mongoose 8.0+
+- **认证**: NextAuth.js
+
+### 开发工具
+- **包管理**: npm / yarn
+- **代码检查**: ESLint
+- **构建工具**: Turbopack (Next.js 内置)
+
+## 📁 项目结构
+
+```
+银河证券虚拟管理系统/
+├── app/                          # Next.js 16 App Router核心
+│   ├── admin/                    # 管理系统核心页面（铝感工业风格）
+│   │   ├── layout.tsx           # 管理系统布局（侧边栏+权限校验）
+│   │   ├── login/               # 登录页
+│   │   │   └── page.tsx         # Next-Auth登录界面
+│   │   ├── dashboard/           # 仪表盘（总览）
+│   │   │   └── page.tsx         # 行情+交易统计总览
+│   │   ├── market/              # 行情管理
+│   │   │   └── page.tsx         # 真实行情展示/同步
+│   │   ├── customers/           # 客户管理
+│   │   │   └── page.tsx         # 客户列表/开户/销户
+│   │   ├── trades/              # 交易管理
+│   │   │   ├── page.tsx         # 交易记录总览
+│   │   │   ├── basic/           # A股/港股基础交易
+│   │   │   │   └── page.tsx     # 买入/卖出操作页
+│   │   │   ├── ipo/             # 新股申购
+│   │   │   │   └── page.tsx     # 申购操作页
+│   │   │   ├── block/           # 大宗交易
+│   │   │   │   └── page.tsx     # 大宗交易操作页
+│   │   │   └── limit-up/        # 一键打板
+│   │   │       └── page.tsx     # 打板操作页
+│   │   ├── holdings/            # 持仓管理
+│   │   │   └── page.tsx         # 持仓查询/盈亏计算
+│   │   └── system/              # 系统管理
+│   │       ├── users/           # 用户管理（创建/上下分）
+│   │       │   ├── page.tsx     # 用户列表
+│   │       │   └── [userId]/    # 单个用户详情
+│   │       │       └── page.tsx # 充值/提现操作页
+│   │       ├── logs/            # 操作日志
+│   │       │   └── page.tsx     # 审计/交易日志查看
+│   │       ├── settings/        # 系统配置
+│   │       │   └── page.tsx     # 手续费/同步频率配置
+│   │       └── integration/     # 客户端接入面板
+│   │           └── page.tsx     # 可视化接入配置/测试
+│   ├── api/                     # Next.js API路由
+│   │   ├── auth/                # 认证接口
+│   │   │   └── [...nextauth]/
+│   │   │       └── route.ts     # Next-Auth核心配置
+│   │   ├── cron/                # 定时任务
+│   │   │   └── sync-quotes/
+│   │   │       └── route.ts     # 行情同步（Vercel Cron）
+│   │   ├── market/              # 行情API
+│   │   │   └── quotes/
+│   │   │       └── route.ts     # 获取真实行情
+│   │   ├── trades/              # 交易API
+│   │   │   ├── basic/
+│   │   │   │   ├── buy/
+│   │   │   │   │   └── route.ts # 虚拟买入
+│   │   │   │   └── sell/
+│   │   │   │       └── route.ts # 虚拟卖出
+│   │   │   ├── ipo/
+│   │   │   │   └── apply/
+│   │   │   │       └── route.ts # 新股申购
+│   │   │   ├── block/
+│   │   │   │   └── trade/
+│   │   │   │       └── route.ts # 大宗交易
+│   │   │   └── limit-up/
+│   │   │       └── trade/
+│   │   │           └── route.ts # 一键打板
+│   │   ├── holdings/            # 持仓API
+│   │   │   └── [accountId]/
+│   │   │       └── route.ts     # 查询持仓
+│   │   ├── customers/           # 客户API
+│   │   │   └── [id]/
+│   │   │       └── route.ts     # 客户CRUD
+│   │   ├── system/              # 系统管理API
+│   │   │   ├── logs/
+│   │   │   │   └── route.ts     # 日志查询
+│   │   │   ├── users/           # 用户管理API
+│   │   │   │   ├── route.ts     # 用户列表/创建
+│   │   │   │   └── [userId]/
+│   │   │   │       ├── route.ts # 用户详情
+│   │   │   │       ├── recharge/
+│   │   │   │       │   └── route.ts # 充值（上分）
+│   │   │   │       └── withdraw/
+│   │   │   │           └── route.ts # 提现（下分）
+│   │   │   └── integration/     # 客户端接入API
+│   │   │       ├── api-keys/
+│   │   │       │   └── route.ts # API密钥管理
+│   │   │       └── test-api/
+│   │   │           └── route.ts # 接口测试
+│   ├── globals.css              # 全局样式（Tailwind+工业风）
+│   └── layout.tsx               # 根布局
+├── lib/                         # 核心逻辑层
+│   ├── mongodb/                 # MongoDB相关
+│   │   ├── client.ts            # 单节点连接（轻量化）
+│   │   └── transaction.ts       # 核心交易事务封装
+│   ├── auth/                    # 认证工具
+│   │   ├── middleware.ts        # 权限校验（ADMIN/OPERATOR）
+│   │   └── utils.ts             # 认证辅助函数
+│   ├── data/                    # 行情数据同步
+│   │   ├── fetchRealQuote.ts    # 拉取A股/港股真实行情
+│   │   └── syncRealQuotes.ts    # 定时同步（本地部署）
+│   ├── trade/                   # 交易核心逻辑
+│   │   ├── basicTrade.ts        # A股/港股基础交易
+│   │   ├── newStockIPO.ts       # 新股申购
+│   │   ├── blockTrade.ts        # 大宗交易
+│   │   └── oneClickLimitUp.ts   # 一键打板
+│   ├── user/                    # 用户管理逻辑
+│   │   ├── createUser.ts        # 创建用户
+│   │   └── fundOperation.ts     # 充值/提现（上下分）
+│   ├── integration/             # 客户端接入逻辑
+│   │   ├── apiKeyManager.ts     # API密钥生成/校验
+│   │   └── apiTester.ts         # 接口测试工具
+│   ├── api/                     # 前端API封装
+│   │   ├── market.ts            # 行情接口封装
+│   │   ├── trades.ts            # 交易接口封装
+│   │   ├── system.ts            # 系统管理接口封装
+│   │   └── integration.ts       # 接入面板接口封装
+│   ├── utils/                   # 通用工具
+│   │   ├── formatNumber.ts      # 金额/数量格式化
+│   │   ├── theme.ts             # 铝感工业风格主题
+│   │   └── validation.ts        # 表单校验
+│   └── hooks/                   # 自定义Hooks
+│       ├── useAuth.ts           # 权限Hook
+│       ├── useQuotes.ts         # 行情SWR缓存
+│       ├── useTrades.ts         # 交易数据Hook
+│       └── useIntegration.ts    # 接入面板Hook
+├── types/                       # TS类型定义
+│   ├── auth.ts                  # 认证类型
+│   ├── market.ts                # 行情类型
+│   ├── trade.ts                 # 交易类型
+│   ├── customer.ts              # 客户类型
+│   ├── user.ts                  # 用户/资金类型
+│   ├── integration.ts           # 客户端接入类型
+│   └── logs.ts                  # 日志类型
+├── public/                      # 静态资源
+│   ├── icons/                   # 自定义图标
+│   ├── images/                  # 工业风背景/LOGO
+│   └── favicon.ico
+├── tailwind.config.ts           # Tailwind配置（工业风）
+├── tsconfig.json                # TS配置（严格模式+别名）
+├── next.config.js               # Next.js配置（Turbopack）
+├── .env.local                   # 本地环境变量
+├── .env.production              # 生产环境变量
+└── README.md                    # 部署/使用文档
+```
+
+## 🚀 快速开始
+
+### 环境要求
+- Node.js 18+ 
+- MongoDB (本地或Atlas)
+- npm 或 yarn
+
+### 安装步骤
+
+1. **克隆项目**
+```bash
+git clone <repository-url>
+cd galaxy-securities-virtual-management-system
+```
+
+2. **安装依赖**
+```bash
+npm install
+# 或
+yarn install
+```
+
+3. **环境变量配置**
+复制环境变量模板文件：
+```bash
+cp .env.production.example .env.local
+```
+编辑 `.env.local` 文件，配置以下变量：
+```env
+# MongoDB连接字符串
+MONGODB_URI=mongodb://localhost:27017/galaxy_securities
+
+# NextAuth配置
+NEXTAUTH_SECRET=your-secret-key-here
+NEXTAUTH_URL=http://localhost:3000
+
+# 数据库模式
+USE_REAL_DB=true
+```
+
+4. **初始化数据库**
+```bash
+# 确保MongoDB服务正在运行
+node scripts/seed-atlas.js
+```
+
+5. **启动开发服务器**
+```bash
+npm run dev
+# 或
+yarn dev
+```
+
+6. **访问应用**
+打开浏览器访问：http://localhost:3000
+
+### 默认账户
+- **管理员**: 用户名 `银河管理员`，角色 `ADMIN`
+- **操作员**: 用户名 `风控审计员_01`，角色 `OPERATOR`
+- **客户**: 用户名 `龙腾资产管理中心`，角色 `CLIENT`
+
+## 🔧 开发指南
+
+### 项目结构说明
+- `app/`: Next.js App Router 页面和API路由
+- `lib/`: 业务逻辑和工具函数
+- `types/`: TypeScript类型定义
+- `public/`: 静态资源
+- `scripts/`: 数据库脚本和工具
+
+### 代码规范
+- 使用TypeScript严格模式
+- 遵循ESLint配置
+- 组件使用函数式组件和React Hooks
+- 样式使用Tailwind CSS类名
+
+### 添加新功能
+1. 在 `app/` 下创建页面或API路由
+2. 在 `lib/` 下添加业务逻辑
+3. 在 `types/` 下添加类型定义
+4. 更新相关文档
+
+## 🌐 API文档
+
+### 认证API
+- `POST /api/auth/[...nextauth]` - NextAuth认证端点
+
+### 行情API
+- `GET /api/market/quotes` - 获取股票行情数据
+- `GET /api/cron/sync-quotes` - 手动触发行情同步
+
+### 交易API
+- `POST /api/trades/basic/buy` - 买入股票
+- `POST /api/trades/basic/sell` - 卖出股票
+- `POST /api/trades/ipo/apply` - 新股申购
+- `POST /api/trades/block/trade` - 大宗交易
+- `POST /api/trades/limit-up/trade` - 一键打板
+
+### 系统管理API
+- `GET /api/system/logs` - 查询操作日志
+- `GET /api/system/users` - 用户列表
+- `POST /api/system/users/[userId]/recharge` - 用户充值
+- `POST /api/system/users/[userId]/withdraw` - 用户提现
+
+## 🚢 部署指南
+
+### Vercel部署（推荐）
+
+1. **连接GitHub仓库**
+   - 在Vercel控制台新建项目
+   - 连接到GitHub仓库
+
+2. **环境变量配置**
+   在Vercel项目设置中添加以下环境变量：
+   - `MONGODB_URI`: MongoDB Atlas连接字符串
+   - `NEXTAUTH_SECRET`: 随机32+字节密钥
+   - `NEXTAUTH_URL`: 你的Vercel域名
+   - `USE_REAL_DB`: `true`
+
+3. **构建设置**
+   - Framework Preset: Next.js
+   - Build Command: `npm run build`
+   - Output Directory: (留空，Next.js自动处理)
+
+4. **部署后操作**
+   - 检查构建日志
+   - 运行数据库初始化脚本（如果需要）：
+     ```bash
+     node scripts/seed-atlas.js
+     ```
+
+### 本地部署
+1. 构建生产版本：
+   ```bash
+   npm run build
+   ```
+
+2. 启动生产服务器：
+   ```bash
+   npm start
+   ```
+
+## 📊 数据库设计
+
+### 主要集合
+- `virtual_users`: 用户账户信息
+- `virtual_stocks`: 股票行情数据
+- `virtual_holdings`: 用户持仓记录
+- `virtual_trades`: 交易记录
+- `system_logs`: 系统操作日志
+
+### 索引优化
+- 用户表：`username` 唯一索引
+- 股票表：`symbol` 唯一索引
+- 交易表：`userId` 和 `timestamp` 复合索引
+- 持仓表：`userId` 和 `symbol` 复合唯一索引
+- 日志表：`time` 降序索引
+
+## 🐛 故障排除
+
+### 常见问题
+
+1. **构建失败**
+   - 检查所有 `app/` 下的 `page.tsx` 文件是否存在
+   - 确认TypeScript编译无错误
+
+2. **数据库连接失败**
+   - 检查MongoDB服务状态
+   - 验证 `MONGODB_URI` 环境变量
+   - 确保网络连接正常
+
+3. **认证问题**
+   - 检查 `NEXTAUTH_SECRET` 和 `NEXTAUTH_URL` 配置
+   - 清除浏览器缓存和Cookie
+
+4. **样式问题**
+   - 确认Tailwind CSS配置正确
+   - 检查类名拼写
+
+### 日志查看
+- 开发模式：控制台输出
+- 生产模式：查看Vercel日志或系统日志集合
+
+## 🤝 贡献指南
+
+1. Fork项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开Pull Request
+
+## 📄 许可证
+
+本项目采用MIT许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
+
+## 🙏 致谢
+
+- Next.js团队提供的优秀框架
+- Tailwind CSS团队提供的样式解决方案
+- MongoDB提供的数据库服务
+- 所有贡献者和用户
 
 ---
+
 *银河证券虚拟引擎 v3.1 - 由银河核心技术组提供支持*
 
----
-
-## 部署到 Vercel（快速指南） ✅
-
-1. 在 Vercel 控制台中新建项目并连接到 GitHub 仓库 `AthenDrakomin-hub/galaxy-securities-virtual-management-system`。
-2. 在 **Environment Variables** 中设置：
-   - `MONGODB_URI` = 你的 Atlas 连接字符串（示例在 `.env.production.example`）
-   - `NEXTAUTH_SECRET` = 随机的 32+ 字节密钥
-   - `NEXTAUTH_URL` = `https://<your-vercel-domain>`
-   - `USE_REAL_DB` = `true`
-3. 构建设置：使用默认的 **Framework Preset**（Next.js），构建命令 `npm run build`，输出目录留空（Next.js 自动处理）。
-4. 部署后，检查构建日志；常见问题：
-   - 若缺少页面导致构建失败，请确认所有 `app/` 下的 `page.tsx` 都已提交并位于仓库中。
-   - 若需要初始化数据库，请运行 `node scripts/seed-atlas.js`（在本地或 CI 环境，须设置 `MONGODB_URI`）。
-
----
+**注意**: 本项目为虚拟证券管理系统，仅供教育和演示用途。不涉及真实金融交易，不提供任何投资建议。
