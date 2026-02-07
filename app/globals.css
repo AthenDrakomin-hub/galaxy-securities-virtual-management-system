@@ -79,6 +79,7 @@ body::after {
 
 .industrial-glass {
   background: rgba(18, 18, 18, 0.8);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 69, 0, 0.1);
 }
@@ -100,4 +101,31 @@ body::after {
 
 .recharts-tooltip-cursor {
   fill: rgba(255, 69, 0, 0.05);
+}
+
+/* Industrial grid used on compact panels (e.g., login background) */
+.industrial-grid {
+  background-image: radial-gradient(#ff4500 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* Holding bar inner uses CSS variable --w (set from JS) for dynamic width */
+.holding-bar-inner {
+  width: var(--w);
+}
+
+/* Legend dot accepts dynamic color via CSS variable --c */
+.legend-dot {
+  background-color: var(--c, #ff4500);
+}
+
+/* Recharts tooltip defaults moved to CSS to avoid inline style objects */
+.recharts-default-tooltip {
+  background-color: #121212;
+  border: 1px solid #2e2e2e;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #fff;
 }

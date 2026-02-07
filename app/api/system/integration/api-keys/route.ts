@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { generateApiKey } from '../../../../../lib/integration/apiKeyManager';
-import { db } from '../../../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 
 // Simulated in-memory storage for keys
 let MOCK_KEYS: any[] = [

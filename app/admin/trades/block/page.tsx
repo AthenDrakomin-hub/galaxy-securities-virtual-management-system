@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Layers, ShieldCheck, Zap, ArrowRightLeft, Info, Loader2, CheckCircle2 } from 'lucide-react';
-import { db } from '../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 
 export default function BlockTradePage() {
   const [symbol, setSymbol] = useState('');
@@ -83,13 +83,16 @@ export default function BlockTradePage() {
               />
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest">协议折价率 (0.80 - 1.00)</label>
+              <label htmlFor="discountRate" className="text-[10px] font-black text-stone-600 uppercase tracking-widest">协议折价率 (0.80 - 1.00)</label>
               <input 
+                id="discountRate"
                 type="number" 
                 step="0.01"
                 min="0.8"
                 max="1"
                 value={discount}
+                title="协议折价率"
+                placeholder="例如 0.90 表示 90% 成交价"
                 onChange={(e) => setDiscount(e.target.value)}
                 className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 font-mono text-stone-200 focus:border-orange-600 outline-none transition"
               />

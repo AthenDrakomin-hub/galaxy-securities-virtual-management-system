@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { db } from '../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 import { ArrowLeftRight, Clock, CheckCircle, Tag } from 'lucide-react';
 
 export default function TradesHistoryPage() {
@@ -30,7 +30,7 @@ export default function TradesHistoryPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-800/50">
-            {trades.map(t => (
+            {trades.map((t: any) => (
               <tr key={t.id} className="hover:bg-stone-800/20 transition-colors">
                 <td className="px-8 py-6">
                   <div className="flex flex-col">

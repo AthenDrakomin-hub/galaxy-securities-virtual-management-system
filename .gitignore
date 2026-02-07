@@ -7,10 +7,6 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Allow specific app logs folder (we need the admin logs page tracked)
-!app/admin/system/logs/
-!app/admin/system/logs/*
-
 node_modules
 dist
 dist-ssr

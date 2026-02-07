@@ -1,12 +1,13 @@
 
 import { NextResponse } from 'next/server';
-import { db } from '../../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: import('next/server').NextRequest,
+  _ctx: any
 ) {
-  const user = db.users.find(u => u.id === params.id);
+  const params = (_ctx as any).params;
+  const user = db.users.find((u: any) => u.id === params.id);
   if (!user) {
     return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
   }
@@ -14,11 +15,12 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: import('next/server').NextRequest,
+  _ctx: any
 ) {
+  const params = (_ctx as any).params;
   const body = await request.json();
-  const index = db.users.findIndex(u => u.id === params.id);
+  const index = db.users.findIndex((u: any) => u.id === params.id);
   
   if (index === -1) {
     return NextResponse.json({ error: 'Customer not found' }, { status: 404 });

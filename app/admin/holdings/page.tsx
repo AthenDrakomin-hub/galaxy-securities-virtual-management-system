@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../../lib/mongodb/client';
 import { Briefcase, TrendingUp, TrendingDown, PieChart } from 'lucide-react';
+import styles from './holdings.module.css';
 
 export default function HoldingsPage() {
   const [holdings, setHoldings] = useState([...db.holdings]);
@@ -50,8 +51,8 @@ export default function HoldingsPage() {
                 </div>
                 <div className="w-full h-1.5 bg-stone-900 rounded-full overflow-hidden border border-stone-800">
                   <div 
-                    className="h-full bg-orange-600 rounded-full" 
-                    style={{ width: `${(h.currentPrice * h.quantity / totalMarketValue) * 100}%` }}
+                    className={`h-full rounded-full ${styles.holdingBarInner}`}
+                    style={{ '--holding-width': `${(h.currentPrice * h.quantity / totalMarketValue) * 100}%` } as React.CSSProperties}
                   ></div>
                 </div>
               </div>

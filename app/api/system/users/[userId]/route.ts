@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '../../../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 
 interface RouteParams {
   params: {
@@ -7,7 +7,8 @@ interface RouteParams {
   };
 }
 
-export async function GET(request: Request, { params }: RouteParams) {
+export async function GET(request: import('next/server').NextRequest, _ctx: any) {
+  const params = (_ctx as any).params;
   const { userId } = params;
   const user = db.users.find(u => u.id === userId);
   
@@ -18,7 +19,8 @@ export async function GET(request: Request, { params }: RouteParams) {
   return NextResponse.json(user);
 }
 
-export async function PUT(request: Request, { params }: RouteParams) {
+export async function PUT(request: import('next/server').NextRequest, _ctx: any) {
+  const params = (_ctx as any).params;
   const { userId } = params;
   const body = await request.json();
   
@@ -33,7 +35,8 @@ export async function PUT(request: Request, { params }: RouteParams) {
   return NextResponse.json(db.users[userIndex]);
 }
 
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(request: import('next/server').NextRequest, _ctx: any) {
+  const params = (_ctx as any).params;
   const { userId } = params;
   
   const userIndex = db.users.findIndex(u => u.id === userId);

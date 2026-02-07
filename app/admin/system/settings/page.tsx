@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Settings, Save, Database, ShieldAlert, Cpu, CheckCircle2, Loader2 } from 'lucide-react';
-import { db } from '../../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 
 export default function SettingsPage() {
   const [fee, setFee] = useState('0.0005');
@@ -56,11 +56,14 @@ export default function SettingsPage() {
               </h3>
               <div className="space-y-6">
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest">虚拟交易默认手续费率</label>
+                    <label htmlFor="fee" className="text-[10px] font-black text-stone-600 uppercase tracking-widest">虚拟交易默认手续费率</label>
                     <div className="relative">
                       <input 
+                        id="fee"
                         type="text" 
                         value={fee}
+                        placeholder="0.0005"
+                        title="虚拟交易默认手续费率"
                         onChange={(e) => setFee(e.target.value)}
                         className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 font-mono text-stone-300 outline-none focus:border-orange-600 transition" 
                       />
@@ -68,10 +71,13 @@ export default function SettingsPage() {
                     </div>
                  </div>
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest">跨域行情同步频率 (MS)</label>
+                    <label htmlFor="syncFreq" className="text-[10px] font-black text-stone-600 uppercase tracking-widest">跨域行情同步频率 (MS)</label>
                     <input 
+                      id="syncFreq"
                       type="text" 
                       value={syncFreq}
+                      placeholder="5000"
+                      title="跨域行情同步频率（毫秒）"
                       onChange={(e) => setSyncFreq(e.target.value)}
                       className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 font-mono text-stone-300 outline-none focus:border-orange-600 transition" 
                     />
@@ -95,10 +101,13 @@ export default function SettingsPage() {
                     </div>
                  </div>
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest">单笔最大虚拟委托限额 (YUAN)</label>
+                    <label htmlFor="maxTrade" className="text-[10px] font-black text-stone-600 uppercase tracking-widest">单笔最大虚拟委托限额 (YUAN)</label>
                     <input 
+                      id="maxTrade"
                       type="text" 
                       value={maxTrade}
+                      placeholder="10,000,000"
+                      title="单笔最大虚拟委托限额（人民幣）"
                       onChange={(e) => setMaxTrade(e.target.value)}
                       className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 font-mono text-stone-300 outline-none focus:border-orange-600 transition" 
                     />

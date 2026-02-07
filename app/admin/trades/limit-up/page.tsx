@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Zap, Timer, AlertTriangle, Crosshair, TrendingUp, Loader2, CheckCircle2 } from 'lucide-react';
-import { db } from '../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 
 export default function LimitUpPage() {
   const [active, setActive] = useState(false);

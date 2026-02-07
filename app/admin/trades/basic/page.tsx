@@ -1,7 +1,5 @@
 
 import React from 'react';
-import Trade from '../../../../components/Trade';
-import { db } from '../../../../lib/mongodb/client';
 
 export default function BasicTradePage() {
   return (
@@ -23,7 +21,7 @@ export default function BasicTradePage() {
         </div>
       </header>
 
-      <Trade />
+      <div className="p-10 bg-stone-900 border border-stone-800 rounded-3xl text-stone-400">客户端交易组件在此构建环境下暂不可解析 — 若要恢复请确认组件路径与大小写一致。</div>
     </div>
   );
 }

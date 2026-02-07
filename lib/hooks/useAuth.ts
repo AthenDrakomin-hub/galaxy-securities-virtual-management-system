@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { db } from '../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 import { UserAccount } from '../../types/user';
 
 export const useAuth = () => {

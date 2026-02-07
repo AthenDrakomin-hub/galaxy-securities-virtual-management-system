@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Rocket, Shield, Zap, CheckCircle2, Loader2 } from 'lucide-react';
-import { db } from '../../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 
 export default function IPOPage() {
   const [loading, setLoading] = useState<string | null>(null);

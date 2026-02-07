@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { db } from '../../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 import { UserPlus, Settings, DollarSign, Activity, X, Shield, PlusCircle, Loader2 } from 'lucide-react';
 
 export default function UsersManagementPage() {
@@ -95,9 +95,9 @@ export default function UsersManagementPage() {
                 </td>
                 <td className="px-8 py-6 text-right">
                   <div className="flex justify-end gap-2">
-                    <button className="p-2.5 hover:bg-stone-800 rounded-xl text-stone-600 hover:text-orange-500 transition border border-transparent hover:border-stone-700 shadow-sm"><DollarSign size={16} /></button>
-                    <button className="p-2.5 hover:bg-stone-800 rounded-xl text-stone-600 hover:text-white transition border border-transparent hover:border-stone-700 shadow-sm"><Settings size={16} /></button>
-                    <button className="p-2.5 hover:bg-stone-800 rounded-xl text-stone-600 hover:text-red-500 transition border border-transparent hover:border-stone-700 shadow-sm"><Activity size={16} /></button>
+                    <button aria-label="资金操作" title="资金操作" className="p-2.5 hover:bg-stone-800 rounded-xl text-stone-600 hover:text-orange-500 transition border border-transparent hover:border-stone-700 shadow-sm"><DollarSign size={16} /></button>
+                    <button aria-label="编辑权限" title="编辑权限" className="p-2.5 hover:bg-stone-800 rounded-xl text-stone-600 hover:text-white transition border border-transparent hover:border-stone-700 shadow-sm"><Settings size={16} /></button>
+                    <button aria-label="查看活动" title="查看活动" className="p-2.5 hover:bg-stone-800 rounded-xl text-stone-600 hover:text-red-500 transition border border-transparent hover:border-stone-700 shadow-sm"><Activity size={16} /></button>
                   </div>
                 </td>
               </tr>
@@ -116,15 +116,17 @@ export default function UsersManagementPage() {
                     <PlusCircle size={28} className="text-orange-600" />
                     录入新系统主体
                  </h3>
-                 <button onClick={() => setShowModal(false)} className="text-stone-600 hover:text-white transition"><X size={24} /></button>
+                 <button aria-label="关闭" title="关闭弹窗" onClick={() => setShowModal(false)} className="text-stone-600 hover:text-white transition"><X size={24} /></button>
               </div>
 
               <div className="space-y-6 relative z-10">
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">主体名称 (USERNAME)</label>
-                    <input 
-                      type="text" 
+                    <label htmlFor="newUsername" className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">主体名称 (USERNAME)</label>
+                    <input
+                      id="newUsername"
+                      type="text"
                       value={newUsername}
+                      title="主体名称"
                       onChange={(e) => setNewUsername(e.target.value)}
                       placeholder="如：东方红资管、张三个人账户"
                       className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-200 outline-none focus:border-orange-600 transition"
@@ -133,8 +135,10 @@ export default function UsersManagementPage() {
 
                  <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">权限级别 (ROLE)</label>
+                       <label htmlFor="newRole" className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">权限级别 (ROLE)</label>
                        <select 
+                         id="newRole"
+                         title="权限级别"
                          value={newRole}
                          onChange={(e) => setNewRole(e.target.value as any)}
                          className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 text-stone-300 outline-none focus:border-orange-600 transition appearance-none"
@@ -145,10 +149,13 @@ export default function UsersManagementPage() {
                        </select>
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">初始资金 (YUAN)</label>
+                       <label htmlFor="newBalance" className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">初始资金 (YUAN)</label>
                        <input 
+                         id="newBalance"
                          type="number" 
                          value={newBalance}
+                         title="初始资金（YUAN）"
+                         placeholder="100000"
                          onChange={(e) => setNewBalance(e.target.value)}
                          className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-4 font-mono text-orange-500 outline-none focus:border-orange-600 transition"
                        />

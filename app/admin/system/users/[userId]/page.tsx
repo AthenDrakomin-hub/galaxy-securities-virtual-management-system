@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { db } from '../../../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 import { 
   ArrowLeft, 
   DollarSign, 
@@ -26,7 +26,7 @@ export default function UserDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const found = db.users.find(u => u.id === userId);
+    const found = db.users.find((u: any) => u.id === userId);
     if (found) setUser({...found});
     setLoading(false);
   }, [userId]);
@@ -37,7 +37,7 @@ export default function UserDetailPage() {
     if (type === 'RECHARGE') db.recharge(user.id, val);
     else db.withdraw(user.id, val);
     
-    const updated = db.users.find(u => u.id === userId);
+    const updated = db.users.find((u: any) => u.id === userId);
     if (updated) setUser({...updated});
     
     setAmount('');
@@ -53,6 +53,8 @@ export default function UserDetailPage() {
       <header className="flex items-center gap-6">
         <button 
           onClick={() => router.push('/admin/customers')}
+          title="返回客户列表"
+          aria-label="返回客户列表"
           className="p-3 bg-stone-900 border border-stone-800 rounded-2xl text-stone-500 hover:text-white transition shadow-lg"
         >
           <ArrowLeft size={24} />
@@ -95,22 +97,26 @@ export default function UserDetailPage() {
               <div className="space-y-8 relative z-10">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                       <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest">操作金额 (YUAN)</label>
+                       <label htmlFor="opAmount" className="text-[10px] font-black text-stone-600 uppercase tracking-widest">操作金额 (YUAN)</label>
                        <input 
+                         id="opAmount"
                          type="number" 
                          value={amount}
-                         onChange={(e) => setAmount(e.target.value)}
+                         title="操作金额（YUAN）"
                          placeholder="0.00"
+                         onChange={(e) => setAmount(e.target.value)}
                          className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-5 text-2xl font-mono text-orange-500 outline-none focus:border-orange-600 transition"
                        />
                     </div>
                     <div className="space-y-3">
-                       <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest">审计备注 (OPTIONAL)</label>
+                       <label htmlFor="opRemark" className="text-[10px] font-black text-stone-600 uppercase tracking-widest">审计备注 (OPTIONAL)</label>
                        <input 
+                         id="opRemark"
                          type="text" 
                          value={remark}
                          onChange={(e) => setRemark(e.target.value)}
                          placeholder="如：客户入金、系统奖励..."
+                         title="审计备注（可选）"
                          className="w-full bg-stone-950 border border-stone-800 rounded-2xl p-5 text-stone-300 outline-none focus:border-orange-600 transition"
                        />
                     </div>

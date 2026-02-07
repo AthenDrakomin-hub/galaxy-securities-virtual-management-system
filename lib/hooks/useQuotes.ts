@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { db } from '../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
 import { Stock } from '../../types/market';
 
 export const useQuotes = (interval: number = 5000) => {

@@ -19,8 +19,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 relative overflow-hidden">
       {/* Background Industrial Grid */}
-      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(#ff4500 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+      <div className="absolute inset-0 industrial-grid"></div>
       
       <div className="w-full max-w-md bg-[#121212] border border-stone-800 rounded-[2.5rem] p-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] relative z-10">
         <div className="flex flex-col items-center mb-10">
@@ -33,24 +32,32 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">Terminal ID</label>
+            <label htmlFor="terminalId" className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">Terminal ID</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-700" size={18} />
               <input 
+                id="terminalId"
                 type="text" 
                 defaultValue="SYS_ADMIN_01"
+                placeholder="输入终端标识（如 SYS_ADMIN_01）"
+                title="终端标识"
+                aria-label="Terminal ID"
                 className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 pl-12 pr-4 font-mono text-stone-300 outline-none focus:border-orange-600 transition"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">Access Credentials</label>
+            <label htmlFor="accessCred" className="text-[10px] font-black text-stone-600 uppercase tracking-widest ml-1">Access Credentials</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-700" size={18} />
               <input 
+                id="accessCred"
                 type="password" 
                 defaultValue="********"
+                placeholder="输入访问凭证"
+                title="访问凭证"
+                aria-label="Access Credentials"
                 className="w-full bg-stone-950 border border-stone-800 rounded-2xl py-4 pl-12 pr-4 font-mono text-stone-300 outline-none focus:border-orange-600 transition"
               />
             </div>

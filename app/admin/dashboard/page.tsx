@@ -4,7 +4,8 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Wallet, TrendingUp, Users, Zap, ArrowUpRight, ArrowDownRight, ShieldAlert } from 'lucide-react';
-import { db } from '../../../lib/mongodb/client';
+import { db } from '@/lib/mongodb/client';
+import styles from './dashboard.module.css';
 
 const DashboardCard = ({ title, value, change, isUp, icon }: any) => (
   <div className="bg-[#121212] border border-stone-800 p-6 rounded-2xl hover:border-stone-700 transition group relative overflow-hidden shadow-xl">
@@ -136,9 +137,7 @@ export default function DashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
                 <XAxis dataKey="t" stroke="#444" fontSize={10} axisLine={false} tickLine={false} />
                 <YAxis stroke="#444" fontSize={10} axisLine={false} tickLine={false} hide />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#121212', border: '1px solid #2e2e2e', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
-                />
+                <Tooltip />
                 <Area type="monotone" dataKey="v" stroke="#ff4500" strokeWidth={3} fillOpacity={1} fill="url(#chartColor)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -166,16 +165,16 @@ export default function DashboardPage() {
                       <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} stroke="none" />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#121212', border: '1px solid #2e2e2e', borderRadius: '8px', fontSize: '10px' }}
-                  />
+                  <Tooltip />
                 </PieChart>
              </ResponsiveContainer>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-6">
              {pieData.map((item, i) => (
                <div key={item.name} className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: PIE_COLORS[i] }}></div>
+                      <div 
+                        className={`w-2 h-2 rounded-full ${styles.legendDot} ${styles[`legendColor${i}`]}`}
+                      ></div>
                   <span className="text-[10px] font-black text-stone-500 uppercase">{item.name}</span>
                </div>
              ))}
